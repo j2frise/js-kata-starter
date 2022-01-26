@@ -11,7 +11,6 @@ export interface ResultOrError {
     response: FractionDTO | string
 }
 
-
 function pgcd(a: number, b: number): number {
     a = Math.abs(a);
     b = Math.abs(b);
@@ -30,18 +29,19 @@ function pgcd(a: number, b: number): number {
     }
 }
 
-export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): ResultOrError {
-    let divider: number = fraction1.denominator * fraction2.denominator;
-    let tempResult: number = (fraction1.numerator * fraction2.denominator) + (fraction2.numerator * fraction1.denominator);
-    let pgcdValue: number = pgcd(tempResult, divider);
-
-    if (pgcdValue != 1) {
-        tempResult /= pgcdValue;
-        divider /= pgcdValue;
-        pgcdValue = pgcd(tempResult, divider);
+function scaleDown({ numerator, denominator }: FractionDTO, factor: number): FractionDTO {
+    return {
+        numerator: numerator / factor,
+        denominator: denominator / factor,
     }
+}
 
-    let result = { numerator: tempResult, denominator: divider }
+export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): ResultOrError {
+    let denominator: number = fraction1.denominator * fraction2.denominator;
+    let numerator: number = (fraction1.numerator * fraction2.denominator) + (fraction2.numerator * fraction1.denominator);
+    let pgcdValue: number = pgcd(numerator, denominator);
+
+    let result = scaleDown({ numerator, denominator }, pgcdValue)
     if (result.denominator == 0) {
         return { type: Type.error, response: "incorrect operation, division by 0" };
     }
