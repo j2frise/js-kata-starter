@@ -1,6 +1,11 @@
-function pgcd(a: number | string, b: number | string) {
-    a = Math.abs(typeof a == "string" ? Number(a.split("/")[1]) : a);
-    b = Math.abs(typeof b == "string" ? Number(b.split("/")[1]) : b);
+export interface FractionDTO {
+    numerator: number;
+    denominator: number;
+}
+
+function pgcd(a: number, b: number): number {
+    a = Math.abs(a);
+    b = Math.abs(b);
 
     if (b > a) {
         var tmp = a;
@@ -16,29 +21,17 @@ function pgcd(a: number | string, b: number | string) {
     }
 }
 
-export function fractionCalc(fraction1: string, fraction2: string): string {
+export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): string {
     let divider: number = 1,
         tempResult: number = 0,
         pgcdValue: number = 1;
 
-    let splitFaction1 = fraction1.split("/"),
-        splitFaction2 = fraction2.split("/");
-
-    if (splitFaction1.length != 2 || splitFaction2.length != 2) {
-        return tempResult.toString();
-    }
-
-    let num1: number = Number(splitFaction1[0]) ?? 0,
-        div1: number = Number(splitFaction1[1]) ?? 0,
-        num2: number = Number(splitFaction2[0]) ?? 0,
-        div2: number = Number(splitFaction2[1]) ?? 0;
-
-    if (div1 == div2) {
-        tempResult = num1 + num2;
-        divider = div1;
+    if (fraction1.denominator == fraction2.denominator) {
+        tempResult = fraction1.numerator + fraction2.numerator;
+        divider = fraction1.denominator;
     } else {
-        tempResult = (num1 * div2) + (num2 * div1);
-        divider = div1 * div2;
+        tempResult = (fraction1.numerator * fraction2.denominator) + (fraction2.numerator * fraction1.denominator);
+        divider = fraction1.denominator * fraction2.denominator;
     }
     pgcdValue = pgcd(tempResult, divider);
 
