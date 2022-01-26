@@ -1,7 +1,16 @@
+export enum Type {
+    error = 'ERROR',
+    success = 'RESULT'
+}
 export interface FractionDTO {
     numerator: number;
     denominator: number;
 }
+export interface ResultOrError {
+    type: Type,
+    response: FractionDTO | string
+}
+
 
 function pgcd(a: number, b: number): number {
     a = Math.abs(a);
@@ -21,30 +30,21 @@ function pgcd(a: number, b: number): number {
     }
 }
 
-export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): FractionDTO | string {
-    let divider: number = 1,
-        tempResult: number = 0,
-        pgcdValue: number = 1;
+export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): ResultOrError {
+    let divider: number = fraction1.denominator * fraction2.denominator;
+    let tempResult: number = (fraction1.numerator * fraction2.denominator) + (fraction2.numerator * fraction1.denominator);
+    let pgcdValue: number = pgcd(tempResult, divider);
 
-    if (fraction1.denominator == fraction2.denominator) {
-        tempResult = fraction1.numerator + fraction2.numerator;
-        divider = fraction1.denominator;
-    } else {
-        tempResult = (fraction1.numerator * fraction2.denominator) + (fraction2.numerator * fraction1.denominator);
-        divider = fraction1.denominator * fraction2.denominator;
-    }
-    pgcdValue = pgcd(tempResult, divider);
-
-    while (pgcdValue != 1) {
+    if (pgcdValue != 1) {
         tempResult /= pgcdValue;
         divider /= pgcdValue;
         pgcdValue = pgcd(tempResult, divider);
     }
-    let result = { numerator: tempResult, denominator: divider }
 
+    let result = { numerator: tempResult, denominator: divider }
     if (result.denominator == 0) {
-        return "incorrect operation, division by 0";
+        return { type: Type.error, response: "incorrect operation, division by 0" };
     }
 
-    return result;
+    return { type: Type.success, response: result };
 }
