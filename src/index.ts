@@ -45,5 +45,6 @@ export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): st
     if (typeof result == "string" && result.split("/")[1] == "0") {
         result = "incorrect operation, division by 0";
     }
+
     return result.toString();
 }
