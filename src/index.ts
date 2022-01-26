@@ -42,13 +42,8 @@ export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): st
     }
     let result = divider == 1 ? tempResult : tempResult + "/" + divider;
 
-    if (typeof result == "string") {
-        let splitResult = result.split("/");
-        if (splitResult[0] == splitResult[1]) {
-            result = 1;
-        } else if (splitResult[1] == "0") {
-            result = "incorrect operation, division by 0";
-        }
+    if (typeof result == "string" && result.split("/")[1] == "0") {
+        result = "incorrect operation, division by 0";
     }
     return result.toString();
 }
