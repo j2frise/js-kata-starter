@@ -21,7 +21,7 @@ function pgcd(a: number, b: number): number {
     }
 }
 
-export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): string {
+export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): FractionDTO | string {
     let divider: number = 1,
         tempResult: number = 0,
         pgcdValue: number = 1;
@@ -40,11 +40,11 @@ export function fractionCalc(fraction1: FractionDTO, fraction2: FractionDTO): st
         divider /= pgcdValue;
         pgcdValue = pgcd(tempResult, divider);
     }
-    let result = divider == 1 ? tempResult : tempResult + "/" + divider;
+    let result = { numerator: tempResult, denominator: divider }
 
-    if (typeof result == "string" && result.split("/")[1] == "0") {
-        result = "incorrect operation, division by 0";
+    if (result.denominator == 0) {
+        return "incorrect operation, division by 0";
     }
 
-    return result.toString();
+    return result;
 }
